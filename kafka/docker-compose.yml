@@ -1,0 +1,45 @@
+
+#   zookeeper:
+#     environment:
+#       ZOOKEEPER_SERVER_ID: 1 (크ㄹ러스터에서 유ㄹ하게 주퍼를 식별할 ID, 동일 클러스터 내에서 이값은 중복되면 x, 단일 브로커 이기 때문에 이 값은 의미가 없다.)
+#       ZOOKEEPER_CLIENT_PORT: 2181 (기본 주키퍼의 포트)
+#       ZOOKEEPER_TICK_TIME: 2000   (클러스터를 구성할때 동기화를 위한 기본 틱타임)
+#       ZOOKEEPER_INIT_LIMIT: 5   (주키퍼 초기화를 위한 제한 시간 설정, 주키퍼 클러스터는 쿼텀이라는 과정을 통해서 마스터를 선출, 리더에게 커넥션을 맺을때 지정할 초기 타임아웃 시간, TICK_TIME 단위로 설정 멀티 브로커에서 유효)
+#       ZOOKEEPER_SYNC_LIMIT: 2   (주키퍼 리더와 나머지 서버들의 싱크타임이다. 이시간 내 싱크 응답이 들어오는 경우 클러스터 정상으로 구성되어 있음을 확인. 이 옵션도 멀티 브로커)
+#     ports:
+#       - "22181:2181"
+
+#   kafka:
+#     depends_on:
+#       - zookeeper
+#     ports:
+#       - "29092:29092"
+#     environment:
+#       KAFKA_BROKER_ID: 1    (유니크해야하며 지금예제는 단일 브로커기 때문에 없어도 무방하다.)
+#       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181' (커넥션하기 위한 대상을 지정한다. 위에 depends_on을 따라간다.)
+#       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092 (외부접속을 위한 리스터를 지정한다.)
+#       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT (보안을 위한 프로토콜 매핑이다. 이 설정 값은 advertised_listenrs 과 함께 key/value로 매핑)
+#       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT (도커 내부에서 사용할 리스너 이름을 지정한다. 이전에 매핑된 Plaintext가 사용된다.)
+#       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 (single ㅡㅂ로커인 경우에 지정하여 1로 설정. 멀티브로커는 기본값을 사용하므로 이 설정이 필요 없다.)
+#       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0 (카프카 그룹이 초기 리밸런싱 할때 컨슈머들이 컨슈머 그룹에 조인할때 대기 시간이다.)
+
+
+version: '2'
+services:
+  zookeeper:
+    # ZOOKEEPER_SERVER_ID: 1
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:2.12-2.5.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
