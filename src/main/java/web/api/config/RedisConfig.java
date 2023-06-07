@@ -1,12 +1,15 @@
 package web.api.config;
 
-import static io.lettuce.core.ReadFrom.REPLICA_PREFERRED;
-
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.cluster.ClusterClientOptions;
+import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -24,29 +27,24 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import io.lettuce.core.ClientOptions;
-import io.lettuce.core.cluster.ClusterClientOptions;
-import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import web.api.config.properties.CacheProperties;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static io.lettuce.core.ReadFrom.REPLICA_PREFERRED;
 
 @EnableTransactionManagement
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class RedisConfig {
-    @Value("spring.redis.cluster.mode")
-    private Boolean clusterMode;
-
     private final CacheProperties cacheProperties;
+
+    @Value("${spring.redis.cluster.mode:true}")
+    private Boolean clusterMode;
 
     @Bean(name = "redisCacheConnectionFactory")
     public LettuceConnectionFactory redisConnectionFactory(RedisProperties redisProperties) {

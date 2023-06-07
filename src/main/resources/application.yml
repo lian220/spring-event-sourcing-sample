@@ -33,9 +33,10 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
   redis:
-    cluster.mode: false
     host: localhost
     port: 6379
+    cluster:
+      mode: false
 
 server:
   port: 8090

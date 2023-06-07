@@ -41,3 +41,4 @@ secrets.yml
 .gradletasknamecache
 .sts4-cache
 logback-spring.xml
+posrgres/data/
