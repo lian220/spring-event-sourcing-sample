@@ -4435,3 +4435,153 @@ Action:
 
 Consider defining a bean of type 'web.api.config.properties.CacheProperties' in your configuration.
 
+INFO  23-06-07 17:46:14[main] [ApiApplication:55] - Starting ApiApplication using Java 17.0.7 on limdoyoung with PID 26064 (C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample\target\classes started by dlaeh in C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample)
+INFO  23-06-07 17:46:14[main] [ApiApplication:631] - No active profile set, falling back to 1 default profile: "default"
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationExtensionSupport:349] - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface web.api.repository.MemberJpaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 21 ms. Found 0 JDBC repository interfaces.
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 98 ms. Found 1 JPA repository interfaces.
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationExtensionSupport:349] - Spring Data Redis - Could not safely identify store assignment for repository candidate interface web.api.repository.MemberJpaRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+INFO  23-06-07 17:46:15[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+INFO  23-06-07 17:46:16[main] [TomcatWebServer:108] - Tomcat initialized with port(s): 8090 (http)
+INFO  23-06-07 17:46:16[main] [Http11NioProtocol:173] - Initializing ProtocolHandler ["http-nio-8090"]
+INFO  23-06-07 17:46:16[main] [StandardService:173] - Starting service [Tomcat]
+INFO  23-06-07 17:46:16[main] [StandardEngine:173] - Starting Servlet engine: [Apache Tomcat/9.0.71]
+INFO  23-06-07 17:46:16[main] [[/]:173] - Initializing Spring embedded WebApplicationContext
+INFO  23-06-07 17:46:16[main] [ServletWebServerApplicationContext:292] - Root WebApplicationContext: initialization completed in 2475 ms
+INFO  23-06-07 17:46:17[main] [LogHelper:31] - HHH000204: Processing PersistenceUnitInfo [name: default]
+INFO  23-06-07 17:46:17[main] [Version:44] - HHH000412: Hibernate ORM core version 5.6.15.Final
+INFO  23-06-07 17:46:17[main] [Version:56] - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+INFO  23-06-07 17:46:17[main] [HikariDataSource:110] - HikariPool-1 - Starting...
+INFO  23-06-07 17:46:17[main] [HikariDataSource:123] - HikariPool-1 - Start completed.
+INFO  23-06-07 17:46:17[main] [Dialect:175] - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+INFO  23-06-07 17:46:18[main] [JtaPlatformInitiator:52] - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+INFO  23-06-07 17:46:18[main] [LocalContainerEntityManagerFactoryBean:437] - Initialized JPA EntityManagerFactory for persistence unit 'default'
+WARN  23-06-07 17:46:18[main] [AnnotationConfigServletWebServerApplicationContext:591] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'redisConfig' defined in file [C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample\target\classes\web\api\config\RedisConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'web.api.config.properties.CacheProperties' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+INFO  23-06-07 17:46:18[main] [LocalContainerEntityManagerFactoryBean:651] - Closing JPA EntityManagerFactory for persistence unit 'default'
+INFO  23-06-07 17:46:18[main] [HikariDataSource:350] - HikariPool-1 - Shutdown initiated...
+INFO  23-06-07 17:46:18[main] [HikariDataSource:352] - HikariPool-1 - Shutdown completed.
+INFO  23-06-07 17:46:18[main] [StandardService:173] - Stopping service [Tomcat]
+INFO  23-06-07 17:46:18[main] [ConditionEvaluationReportLoggingListener:136] - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+ERROR 23-06-07 17:46:18[main] [LoggingFailureAnalysisReporter:40] - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in web.api.config.RedisConfig required a bean of type 'web.api.config.properties.CacheProperties' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'web.api.config.properties.CacheProperties' in your configuration.
+
+INFO  23-06-07 17:54:25[main] [ApiApplication:55] - Starting ApiApplication using Java 17.0.7 on limdoyoung with PID 36920 (C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample\target\classes started by dlaeh in C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample)
+INFO  23-06-07 17:54:25[main] [ApiApplication:631] - No active profile set, falling back to 1 default profile: "default"
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationExtensionSupport:349] - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface web.api.repository.MemberJpaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 20 ms. Found 0 JDBC repository interfaces.
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 101 ms. Found 1 JPA repository interfaces.
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationExtensionSupport:349] - Spring Data Redis - Could not safely identify store assignment for repository candidate interface web.api.repository.MemberJpaRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+INFO  23-06-07 17:54:26[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+INFO  23-06-07 17:54:27[main] [TomcatWebServer:108] - Tomcat initialized with port(s): 8090 (http)
+INFO  23-06-07 17:54:27[main] [Http11NioProtocol:173] - Initializing ProtocolHandler ["http-nio-8090"]
+INFO  23-06-07 17:54:27[main] [StandardService:173] - Starting service [Tomcat]
+INFO  23-06-07 17:54:27[main] [StandardEngine:173] - Starting Servlet engine: [Apache Tomcat/9.0.71]
+INFO  23-06-07 17:54:27[main] [[/]:173] - Initializing Spring embedded WebApplicationContext
+INFO  23-06-07 17:54:27[main] [ServletWebServerApplicationContext:292] - Root WebApplicationContext: initialization completed in 2175 ms
+INFO  23-06-07 17:54:27[main] [LogHelper:31] - HHH000204: Processing PersistenceUnitInfo [name: default]
+INFO  23-06-07 17:54:28[main] [Version:44] - HHH000412: Hibernate ORM core version 5.6.15.Final
+INFO  23-06-07 17:54:28[main] [Version:56] - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+INFO  23-06-07 17:54:28[main] [HikariDataSource:110] - HikariPool-1 - Starting...
+INFO  23-06-07 17:54:28[main] [HikariDataSource:123] - HikariPool-1 - Start completed.
+INFO  23-06-07 17:54:28[main] [Dialect:175] - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+INFO  23-06-07 17:54:29[main] [JtaPlatformInitiator:52] - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+INFO  23-06-07 17:54:29[main] [LocalContainerEntityManagerFactoryBean:437] - Initialized JPA EntityManagerFactory for persistence unit 'default'
+WARN  23-06-07 17:54:29[main] [AnnotationConfigServletWebServerApplicationContext:591] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'redisConfig' defined in file [C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample\target\classes\web\api\config\RedisConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'web.api.config.properties.CacheProperties' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+INFO  23-06-07 17:54:29[main] [LocalContainerEntityManagerFactoryBean:651] - Closing JPA EntityManagerFactory for persistence unit 'default'
+INFO  23-06-07 17:54:29[main] [HikariDataSource:350] - HikariPool-1 - Shutdown initiated...
+INFO  23-06-07 17:54:29[main] [HikariDataSource:352] - HikariPool-1 - Shutdown completed.
+INFO  23-06-07 17:54:29[main] [StandardService:173] - Stopping service [Tomcat]
+INFO  23-06-07 17:54:29[main] [ConditionEvaluationReportLoggingListener:136] - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+ERROR 23-06-07 17:54:29[main] [LoggingFailureAnalysisReporter:40] - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in web.api.config.RedisConfig required a bean of type 'web.api.config.properties.CacheProperties' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'web.api.config.properties.CacheProperties' in your configuration.
+
+INFO  23-06-07 17:54:57[main] [ApiApplication:55] - Starting ApiApplication using Java 17.0.7 on limdoyoung with PID 13332 (C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample\target\classes started by dlaeh in C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample)
+INFO  23-06-07 17:54:57[main] [ApiApplication:631] - No active profile set, falling back to 1 default profile: "default"
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationExtensionSupport:349] - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface web.api.repository.MemberJpaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 20 ms. Found 0 JDBC repository interfaces.
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 99 ms. Found 1 JPA repository interfaces.
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:262] - Multiple Spring Data modules found, entering strict repository configuration mode
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:132] - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationExtensionSupport:349] - Spring Data Redis - Could not safely identify store assignment for repository candidate interface web.api.repository.MemberJpaRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+INFO  23-06-07 17:54:58[main] [RepositoryConfigurationDelegate:201] - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+INFO  23-06-07 17:54:59[main] [TomcatWebServer:108] - Tomcat initialized with port(s): 8090 (http)
+INFO  23-06-07 17:54:59[main] [Http11NioProtocol:173] - Initializing ProtocolHandler ["http-nio-8090"]
+INFO  23-06-07 17:54:59[main] [StandardService:173] - Starting service [Tomcat]
+INFO  23-06-07 17:54:59[main] [StandardEngine:173] - Starting Servlet engine: [Apache Tomcat/9.0.71]
+INFO  23-06-07 17:54:59[main] [[/]:173] - Initializing Spring embedded WebApplicationContext
+INFO  23-06-07 17:54:59[main] [ServletWebServerApplicationContext:292] - Root WebApplicationContext: initialization completed in 2202 ms
+INFO  23-06-07 17:55:00[main] [LogHelper:31] - HHH000204: Processing PersistenceUnitInfo [name: default]
+INFO  23-06-07 17:55:00[main] [Version:44] - HHH000412: Hibernate ORM core version 5.6.15.Final
+INFO  23-06-07 17:55:00[main] [Version:56] - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+INFO  23-06-07 17:55:00[main] [HikariDataSource:110] - HikariPool-1 - Starting...
+INFO  23-06-07 17:55:00[main] [HikariDataSource:123] - HikariPool-1 - Start completed.
+INFO  23-06-07 17:55:00[main] [Dialect:175] - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+INFO  23-06-07 17:55:01[main] [JtaPlatformInitiator:52] - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+INFO  23-06-07 17:55:01[main] [LocalContainerEntityManagerFactoryBean:437] - Initialized JPA EntityManagerFactory for persistence unit 'default'
+WARN  23-06-07 17:55:01[main] [AnnotationConfigServletWebServerApplicationContext:591] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'redisConfig' defined in file [C:\Users\dlaeh\workSpaces\spring-event-sourcing-sample\target\classes\web\api\config\RedisConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'web.api.config.properties.CacheProperties' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+INFO  23-06-07 17:55:01[main] [LocalContainerEntityManagerFactoryBean:651] - Closing JPA EntityManagerFactory for persistence unit 'default'
+INFO  23-06-07 17:55:01[main] [HikariDataSource:350] - HikariPool-1 - Shutdown initiated...
+INFO  23-06-07 17:55:01[main] [HikariDataSource:352] - HikariPool-1 - Shutdown completed.
+INFO  23-06-07 17:55:01[main] [StandardService:173] - Stopping service [Tomcat]
+INFO  23-06-07 17:55:01[main] [ConditionEvaluationReportLoggingListener:136] - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+ERROR 23-06-07 17:55:01[main] [LoggingFailureAnalysisReporter:40] - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in web.api.config.RedisConfig required a bean of type 'web.api.config.properties.CacheProperties' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'web.api.config.properties.CacheProperties' in your configuration.
+
