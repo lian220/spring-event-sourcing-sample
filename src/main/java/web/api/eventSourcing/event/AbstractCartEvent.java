@@ -1,9 +1,9 @@
 package web.api.eventSourcing.event;
 
 public abstract class AbstractCartEvent implements Event<Long>{
-    protected Long cartId;
+    protected Long memberId;
     @Override
     public Long getIdentifier() {
-        return this.cartId;
+        return this.memberId;
     }
 }

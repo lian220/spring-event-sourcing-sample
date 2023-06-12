@@ -1,12 +1,16 @@
 package web.api.repository;
 
-import web.api.domain.AggregateRoot;
+import org.springframework.data.repository.CrudRepository;
 import web.api.eventSourcing.snapshot.Snapshot;
 
+import java.util.List;
 import java.util.Optional;
-public interface SnapshotRepository<A extends AggregateRoot, ID> {
+@org.springframework.stereotype.Repository
+public interface SnapshotRepository extends CrudRepository<Snapshot, Long> {
 
-    Optional<Snapshot<A, ID>> findLatest(ID id);
+    Optional<Snapshot> findFirstOrderBySeq(Long seq);
 
-    void save(Snapshot<A, ID> snapshot);
+    Snapshot save(Snapshot snapshot);
+
+    List<Snapshot> findAllByOrderByCreatedDesc();
 }

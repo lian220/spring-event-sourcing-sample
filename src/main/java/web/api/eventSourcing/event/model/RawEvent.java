@@ -1,4 +1,4 @@
-package web.api.eventSourcing.event;
+package web.api.eventSourcing.event.model;
 
 public interface RawEvent<ID> {
 

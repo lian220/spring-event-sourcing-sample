@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Data
 public class Cart extends AggregateRoot<Long> {
-    private Long cartId;
+    private Long memberId;
     private Member member;
     private Integer ea;
     private Set<CartItem> cartItems = new HashSet<>();
@@ -23,16 +23,16 @@ public class Cart extends AggregateRoot<Long> {
         super();
     }
 
-    Cart(Long cartId, Member member, List<CartItem> checkoutItems) throws Exception {
-        super(cartId);
-        this.cartId = cartId;
+    Cart(Long memberId, Member member, List<CartItem> checkoutItems) throws Exception {
+        super(memberId);
+        this.memberId = memberId;
         this.member = member;
         this.created = LocalDateTime.now();
 
-        for (CartItem cartItem : cartItems) {
+        for (CartItem cartItem : checkoutItems) {
             this.with(cartItem);
         }
-        applyChange(new CartCreated(cartId, member, cartItems, created));
+        applyChange(new CartCreated(memberId, member, cartItems, created));
 
     }
 
@@ -54,5 +54,12 @@ public class Cart extends AggregateRoot<Long> {
 
         return this;
     }
+
+    public void apply(CartCreated cartCreated) {
+        this.memberId = cartCreated.getMemberId();
+        this.member = cartCreated.getCartMember();
+        this.cartItems = cartCreated.getCartItems();
+    }
+
 
 }

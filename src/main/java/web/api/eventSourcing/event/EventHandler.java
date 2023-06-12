@@ -1,6 +1,9 @@
 package web.api.eventSourcing.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import web.api.domain.AggregateRoot;
+import web.api.eventSourcing.event.model.CartRawEvent;
+import web.api.eventSourcing.model.Cart;
 
 import java.util.List;
 
@@ -15,6 +18,8 @@ public interface EventHandler<A extends AggregateRoot, ID> {
 	 * @param aggregate
 	 */
 	void save(A aggregate);
+
+	void save(Cart cart) throws JsonProcessingException;
 
 	/**
 	 * Get the aggregate

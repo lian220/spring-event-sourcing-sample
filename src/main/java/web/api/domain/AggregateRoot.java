@@ -15,16 +15,16 @@ import java.util.List;
  */
 @Slf4j
 @JsonIgnoreProperties({ "identifier", "expectedVersion", "uncommittedChanges" })
-public abstract class AggregateRoot<ID> implements Serializable {
+public abstract class AggregateRoot<Long> implements Serializable {
 
-	private ID identifier;
+	private Long seq;
 
-	private Long expectedVersion = 0L;
+	private long expectedVersion = 0L;
 
 	private List<Event> changeEvents = new ArrayList<>();
 
-	public AggregateRoot(ID identifier) {
-		this.identifier = identifier;
+	public AggregateRoot(Long seq) {
+		this.seq = seq;
 	}
 
 	public AggregateRoot() {
@@ -39,11 +39,11 @@ public abstract class AggregateRoot<ID> implements Serializable {
 		return this.changeEvents;
 	}
 
-	public ID getIdentifier() {
-		return identifier;
+	public Long getIdentifier() {
+		return seq;
 	}
 
-	public Long getExpectedVersion() {
+	public long getExpectedVersion() {
 		return expectedVersion;
 	}
 

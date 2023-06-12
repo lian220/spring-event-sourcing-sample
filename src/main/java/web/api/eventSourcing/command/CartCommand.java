@@ -33,7 +33,7 @@ public class CartCommand {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long productId;
         private String name;
-        private int quantity;
+        private int ea;
     }
 
 }

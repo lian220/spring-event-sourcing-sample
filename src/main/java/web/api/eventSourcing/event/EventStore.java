@@ -1,11 +1,15 @@
 package web.api.eventSourcing.event;
 
+import org.springframework.data.repository.Repository;
+import web.api.domain.Member;
+
 import java.util.List;
 
 /**
  * Created by jaceshim on 2017. 3. 5..
  */
-public interface EventStore<ID> {
+@org.springframework.stereotype.Repository
+public interface EventStore<ID> extends Repository<Event, Long> {
 
 	/**
 	 * 이벤트를 저장한다

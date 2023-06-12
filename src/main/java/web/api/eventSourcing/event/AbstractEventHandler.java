@@ -1,21 +1,23 @@
 package web.api.eventSourcing.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import web.api.domain.AggregateRoot;
+import web.api.eventSourcing.event.model.CartRawEvent;
+import web.api.eventSourcing.model.Cart;
 import web.api.eventSourcing.snapshot.Snapshot;
+import web.api.repository.EventStoreRepository;
 import web.api.repository.SnapshotRepository;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Created by jaceshim on 2017. 3. 5..
@@ -25,16 +27,16 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 
 	private final Class<A> aggregateType;
 
-	private EventStore<ID> eventStore;
+	private EventStoreRepository eventStoreRepository;
 
-	private SnapshotRepository<A, ID> snapshotRepository;
+	private SnapshotRepository snapshotRepository;
 
-	private Map<ID, AtomicInteger> snapshotCountMap = new ConcurrentHashMap<>();
+	private Map<Long, Integer> snapshotCountMap = new ConcurrentHashMap<Long, Integer>();
 
-	private static final int SNAPSHOT_COUNT = 10;
+	private static final int SNAPSHOT_COUNT = 2;
 
-	public AbstractEventHandler(EventStore eventStore, SnapshotRepository snapshotRepository) {
-		this.eventStore = eventStore;
+	public AbstractEventHandler(EventStoreRepository eventStore, SnapshotRepository snapshotRepository) {
+		this.eventStoreRepository = eventStore;
 		this.snapshotRepository = snapshotRepository;
 		this.aggregateType = aggregateType();
 	}
@@ -69,28 +71,53 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 	}
 
 	@Override
-	public void save(A aggregateRoot) {
-		final ID identifier = (ID) aggregateRoot.getIdentifier();
+	public void save(Cart cart) {
+		ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 		// 이벤트 저장소에 이벤트 저장
-		eventStore.saveEvents(identifier, aggregateRoot.getExpectedVersion(), aggregateRoot.getUncommittedChanges());
+		String payload = "";
+		try {
+			payload = objectMapper.writeValueAsString(cart);
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage());
+		}
+		CartRawEvent rawEvent = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), payload, LocalDateTime.now());
+		eventStoreRepository.save(rawEvent);
+
 
 		// 미처리된 이벤트 목록 clear
-		aggregateRoot.markChangesAsCommitted();
-		AtomicInteger snapshotCount = snapshotCountMap.get(identifier);
+		Integer snapshotCount = snapshotCountMap.get(rawEvent.getIdentifier());
 		if (snapshotCount == null) {
-			snapshotCount = new AtomicInteger(0);
+			snapshotCount = 0;
 		}
 
-		if (snapshotCount.get() == SNAPSHOT_COUNT) {
-			log.debug("{} snapshot count {}", identifier, snapshotCount.get());
-			Snapshot<A, ID> snapshot = new Snapshot<>(identifier, aggregateRoot.getExpectedVersion(), aggregateRoot);
+		if (snapshotCount == SNAPSHOT_COUNT) {
+			log.debug("{} snapshot count {}", rawEvent.getSeq(), snapshotCount);
+			List<CartRawEvent> events = eventStoreRepository.findTop5ByIdentifierOrderBySeqDesc(rawEvent.getIdentifier());
+			AtomicInteger addEa = new AtomicInteger(0);
+			events.stream().map(CartRawEvent::getPayload).forEach(obj -> {
+				Map cart1 = null;
+				try {
+					cart1 = objectMapper.readValue(obj, Map.class);
+				} catch (JsonProcessingException e) {
+					throw new RuntimeException(e);
+				}
+				addEa.addAndGet((Integer) cart1.get("ea"));
+			});
+			CartRawEvent snapshotCart = null;
+			try {
+				snapshotCart = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), objectMapper.writeValueAsString(addEa), LocalDateTime.now());
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+			Snapshot snapshot = new Snapshot(rawEvent.getSeq(), rawEvent.getVersion(), snapshotCart);
 			snapshotRepository.save(snapshot);
-			snapshotCount.set(0);
+			snapshotCountMap.put(rawEvent.getIdentifier(), 0);
 
 			return;
 		}
 
-		final int increaseCount = snapshotCount.incrementAndGet();
+		final int increaseCount = ++snapshotCount;
+		snapshotCountMap.put(rawEvent.getIdentifier(), increaseCount);
 		log.debug("{} snapshot increase count {}", increaseCount);
 	}
 
@@ -99,22 +126,22 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 		// snapshot저장소에서 호출함
 		A aggregateRoot = createAggregateRootViaReflection(identifier);
 
-		Optional<Snapshot<A, ID>> retrieveSnapshot = retrieveSnapshot(identifier);
-		List<Event<ID>> baseEvents;
-		if (retrieveSnapshot.isPresent()) {
-			Snapshot<A, ID> snapshot = retrieveSnapshot.get();
-			baseEvents = eventStore.getEventsByAfterVersion(snapshot.getIdentifier(), snapshot.getVersion());
-			// snapshot에 저장된 aggregateRoot객체를 로딩함.
-			aggregateRoot = snapshot.getAggregateRoot();
-		} else {
-			baseEvents = eventStore.getEvents(identifier);
-		}
-
-		if (baseEvents == null || baseEvents.size() == 0) {
-			return null;
-		}
-
-		aggregateRoot.replay(baseEvents);
+//		Optional<Snapshot<A, ID>> retrieveSnapshot = retrieveSnapshot(identifier);
+//		List<Event<ID>> baseEvents;
+//		if (retrieveSnapshot.isPresent()) {
+//			Snapshot<A, ID> snapshot = retrieveSnapshot.get();
+//			baseEvents = eventStore.getEventsByAfterVersion(snapshot.getIdentifier(), snapshot.getVersion());
+//			// snapshot에 저장된 aggregateRoot객체를 로딩함.
+//			aggregateRoot = snapshot.getAggregateRoot();
+//		} else {
+//			baseEvents = eventStore.getEvents(identifier);
+//		}
+//
+//		if (baseEvents == null || baseEvents.size() == 0) {
+//			return null;
+//		}
+//
+//		aggregateRoot.replay(baseEvents);
 
 		return aggregateRoot;
 	}
@@ -123,18 +150,18 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 	public List<A> findAll() throws Exception {
 		List<A> result = new ArrayList<>();
 
-		final List<Event<ID>> allEventsOpt = eventStore.getAllEvents();
-		if (allEventsOpt == null) {
-			return result;
-		}
-
-		final Map<ID, List<Event<ID>>> eventsByIdentifier = allEventsOpt.stream().collect(groupingBy(Event::getIdentifier));
-		for (Map.Entry<ID, List<Event<ID>>> entry : eventsByIdentifier.entrySet()) {
-			A aggregateRoot = createAggregateRootViaReflection(entry.getKey());
-			aggregateRoot.replay(entry.getValue());
-
-			result.add(aggregateRoot);
-		}
+//		final List<Event<ID>> allEventsOpt = eventStore.getAllEvents();
+//		if (allEventsOpt == null) {
+//			return result;
+//		}
+//
+//		final Map<ID, List<Event<ID>>> eventsByIdentifier = allEventsOpt.stream().collect(groupingBy(Event::getIdentifier));
+//		for (Map.Entry<ID, List<Event<ID>>> entry : eventsByIdentifier.entrySet()) {
+//			A aggregateRoot = createAggregateRootViaReflection(entry.getKey());
+//			aggregateRoot.replay(entry.getValue());
+//
+//			result.add(aggregateRoot);
+//		}
 
 		return result;
 	}
@@ -144,11 +171,11 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 	 * @param identifier
 	 * @return
 	 */
-	private Optional<Snapshot<A, ID>> retrieveSnapshot(ID identifier) {
+	private Optional<Snapshot> retrieveSnapshot(Long seq) {
 		if (snapshotRepository == null) {
 			return Optional.empty();
 		}
-		return snapshotRepository.findLatest(identifier);
+		return snapshotRepository.findFirstOrderBySeq(seq);
 	}
 
 }

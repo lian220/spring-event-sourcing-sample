@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import web.api.eventSourcing.model.Cart;
 import web.api.eventSourcing.command.CartCommand;
+import web.api.eventSourcing.snapshot.Snapshot;
 import web.api.service.CartService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +30,13 @@ public class CartController {
 
         final Cart cart = cartService.createCart(cartCreatedCommand);
 
-        return new ResponseEntity<>(cart.getCartId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(cart.getMemberId(), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/carts/snapshot", method = RequestMethod.GET)
+    public ResponseEntity findAllSnapshot() {
+        List<Snapshot> snapshots = cartService.findAllSnapshot();
+        return new ResponseEntity(snapshots, HttpStatus.FOUND);
     }
 
 }

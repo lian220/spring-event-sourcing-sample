@@ -13,7 +13,7 @@ public class CartItem {
     }
 
     public void merge(CartItem orderItem) {
-        this.eq += orderItem.eq;
+        this.ea += orderItem.ea;
     }
 
     public boolean isProductEqual(CartItem cartItem) {
