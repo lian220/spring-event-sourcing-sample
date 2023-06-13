@@ -19,6 +19,8 @@ public class CartCommand {
         @OneToMany
         private List<AddProduct> addProducts;
 
+        private Long version;
+
         public CreateCart(Long memberId, List<AddProduct> addProducts) {
             this.memberId = memberId;
             this.addProducts = addProducts;

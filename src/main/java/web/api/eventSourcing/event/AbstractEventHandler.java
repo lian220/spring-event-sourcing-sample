@@ -3,7 +3,9 @@ package web.api.eventSourcing.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import web.api.domain.AggregateRoot;
 import web.api.eventSourcing.event.model.CartRawEvent;
 import web.api.eventSourcing.model.Cart;
@@ -31,7 +33,11 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 
 	private SnapshotRepository snapshotRepository;
 
+	@Autowired
+	private EventStore<ID> eventStore;
+
 	private Map<Long, Integer> snapshotCountMap = new ConcurrentHashMap<Long, Integer>();
+	ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	private static final int SNAPSHOT_COUNT = 2;
 
@@ -70,22 +76,14 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 		throw new IllegalArgumentException("Aggregate에 identifier를 argument로 받는 생성자가 없음");
 	}
 
+	@SneakyThrows
 	@Override
 	public void save(Cart cart) {
-		ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 		// 이벤트 저장소에 이벤트 저장
-		String payload = "";
-		try {
-			payload = objectMapper.writeValueAsString(cart);
-		} catch (JsonProcessingException e) {
-			log.error(e.getMessage());
-		}
-		CartRawEvent rawEvent = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), payload, LocalDateTime.now());
-		eventStoreRepository.save(rawEvent);
+		CartRawEvent rawEvent = eventStore.saveEvents(cart);
 
-
-		// 미처리된 이벤트 목록 clear
-		Integer snapshotCount = snapshotCountMap.get(rawEvent.getIdentifier());
+		//스냅샷 추가
+		Integer snapshotCount = snapshotCountMap.get(cart.getMemberId());
 		if (snapshotCount == null) {
 			snapshotCount = 0;
 		}
@@ -95,20 +93,11 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 			List<CartRawEvent> events = eventStoreRepository.findTop5ByIdentifierOrderBySeqDesc(rawEvent.getIdentifier());
 			AtomicInteger addEa = new AtomicInteger(0);
 			events.stream().map(CartRawEvent::getPayload).forEach(obj -> {
-				Map cart1 = null;
-				try {
-					cart1 = objectMapper.readValue(obj, Map.class);
-				} catch (JsonProcessingException e) {
-					throw new RuntimeException(e);
-				}
-				addEa.addAndGet((Integer) cart1.get("ea"));
+				Map cartTemp = convertStringToMap(obj);
+				addEa.addAndGet((Integer) cartTemp.get("ea"));
 			});
 			CartRawEvent snapshotCart = null;
-			try {
-				snapshotCart = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), objectMapper.writeValueAsString(addEa), LocalDateTime.now());
-			} catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
+			snapshotCart = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), objectMapper.writeValueAsString(addEa), LocalDateTime.now());
 			Snapshot snapshot = new Snapshot(rawEvent.getSeq(), rawEvent.getVersion(), snapshotCart);
 			snapshotRepository.save(snapshot);
 			snapshotCountMap.put(rawEvent.getIdentifier(), 0);
@@ -119,6 +108,14 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 		final int increaseCount = ++snapshotCount;
 		snapshotCountMap.put(rawEvent.getIdentifier(), increaseCount);
 		log.debug("{} snapshot increase count {}", increaseCount);
+	}
+
+	private Map convertStringToMap(String obj) {
+		try {
+			return objectMapper.readValue(obj, Map.class);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

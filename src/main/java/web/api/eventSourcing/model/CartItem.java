@@ -1,9 +1,18 @@
 package web.api.eventSourcing.model;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
+import javax.persistence.*;
+
+@Data
+@Entity
+@NoArgsConstructor
 public class CartItem {
+    @Id
+    private long cartSeq;
+    @OneToOne
     private Product product;
     private int ea;
 

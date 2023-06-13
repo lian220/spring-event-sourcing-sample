@@ -1,7 +1,8 @@
 package web.api.eventSourcing.event;
 
 import org.springframework.data.repository.Repository;
-import web.api.domain.Member;
+import web.api.eventSourcing.event.model.CartRawEvent;
+import web.api.eventSourcing.model.Cart;
 
 import java.util.List;
 
@@ -14,11 +15,10 @@ public interface EventStore<ID> extends Repository<Event, Long> {
 	/**
 	 * 이벤트를 저장한다
 	 *
-	 * @param identifier
-	 * @param expectedVersion
-	 * @param baseEvents
+	 * @param cart
+	 * @return
 	 */
-	void saveEvents(ID identifier, Long expectedVersion, List<Event> baseEvents);
+	CartRawEvent saveEvents(Cart cart);
 
 	/**
 	 * 주어진 identifier 의 저장된 이벤트를 얻는다

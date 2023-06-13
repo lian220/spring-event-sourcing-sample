@@ -41,7 +41,9 @@ public class CartService {
 
         final Member readMember = memberJpaRepository.findByMemberId(cartCreatedProduct.getMemberId());
         final Cart newCart = Cart.cart(readMember.getMemberId(), readMember, addProducts);
-        newCart.setEa(1);
+        int sumEa = newCart.getCartItems().stream().mapToInt(CartItem::getEa).sum();
+        newCart.setEa(sumEa);
+        newCart.setVersion(cartCreatedProduct.getVersion());
         cartEventHandler.save(newCart);
 
         return newCart;

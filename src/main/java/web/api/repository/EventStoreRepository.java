@@ -11,5 +11,7 @@ public interface EventStoreRepository  extends Repository<CartRawEvent, Long> {
 
     CartRawEvent save(CartRawEvent event);
 
+    CartRawEvent findFirstByIdentifierOrderByVersionDesc(Long identifier);
+
     List<CartRawEvent> findTop5ByIdentifierOrderBySeqDesc(Long identifier);
 }
