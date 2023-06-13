@@ -2,7 +2,8 @@ package web.api.eventSourcing.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import web.api.domain.AggregateRoot;
-import web.api.eventSourcing.model.Cart;
+import web.api.eventSourcing.event.model.CartRawEvent;
+import web.api.eventSourcing.query.Cart;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public interface EventHandler<A extends AggregateRoot, ID> {
 	 * @return
 	 */
 	A find(ID identifier) throws Exception;
+	A find(Long seq) throws Exception;
+
+//	CartRawEvent find(Long seq) throws Exception;
 
 	/**
 	 * Get the All aggregate

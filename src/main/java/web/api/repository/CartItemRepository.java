@@ -1,7 +1,7 @@
 package web.api.repository;
 
 import org.springframework.stereotype.Repository;
-import web.api.eventSourcing.model.CartItem;
+import web.api.eventSourcing.query.CartItem;
 
 @Repository
 public interface CartItemRepository extends org.springframework.data.repository.Repository<CartItem, Long> {

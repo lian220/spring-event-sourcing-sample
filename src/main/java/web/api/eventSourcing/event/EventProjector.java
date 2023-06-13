@@ -1,6 +1,6 @@
 package web.api.eventSourcing.event;
 
-import web.api.eventSourcing.model.Cart;
+import web.api.eventSourcing.query.Cart;
 
 public interface EventProjector {
     void handle(Cart event);

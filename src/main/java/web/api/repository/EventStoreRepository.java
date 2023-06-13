@@ -14,4 +14,14 @@ public interface EventStoreRepository  extends Repository<CartRawEvent, Long> {
     CartRawEvent findFirstByIdentifierOrderByVersionDesc(Long identifier);
 
     List<CartRawEvent> findTop5ByIdentifierOrderBySeqDesc(Long identifier);
+
+//    List<CartRawEvent> findBySeqAndVersionGreaterThan(Long seq, Long version);
+
+    List<CartRawEvent> findAllBySeq(Long seq);
+
+//    List<CartRawEvent> findBySeqAndIdentifierGreaterThan(Long seq, Long identifier);
+
+    List<CartRawEvent> findAllBySeqAndIdentifierGreaterThan(Long seq, Long identifier);
+
+    List<CartRawEvent> findAllBySeqGreaterThan(Long seq);
 }

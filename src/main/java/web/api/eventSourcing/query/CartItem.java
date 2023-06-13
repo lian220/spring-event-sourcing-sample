@@ -1,7 +1,6 @@
-package web.api.eventSourcing.model;
+package web.api.eventSourcing.query;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;

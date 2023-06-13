@@ -3,7 +3,7 @@ package web.api.eventSourcing.event;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import web.api.domain.Member;
-import web.api.eventSourcing.model.CartItem;
+import web.api.eventSourcing.query.CartItem;
 
 import java.time.LocalDateTime;
 import java.util.Set;

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import web.api.domain.AggregateRoot;
 import web.api.eventSourcing.event.model.CartRawEvent;
-import web.api.eventSourcing.model.Cart;
+import web.api.eventSourcing.query.Cart;
 import web.api.eventSourcing.snapshot.Snapshot;
 import web.api.repository.EventStoreRepository;
 import web.api.repository.SnapshotRepository;
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by jaceshim on 2017. 3. 5..
  */
 @Slf4j
-public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implements EventHandler<A, ID> {
+public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implements EventHandler<A,ID> {
 
 	private final Class<A> aggregateType;
 
@@ -59,13 +59,13 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 		return null;
 	}
 
-	private A createAggregateRootViaReflection(ID identifier) {
+	private A createAggregateRootViaReflection(Long seq) {
 		try {
 			Constructor[] constructors = aggregateType.getDeclaredConstructors();
 			for (Constructor constructor : constructors) {
 				if (constructor.getParameterCount() == 1) {
 					constructor.setAccessible(true);
-					return (A) constructor.newInstance(identifier);
+					return (A) constructor.newInstance(seq);
 				}
 			}
 
@@ -96,9 +96,8 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 				Map cartTemp = convertStringToMap(obj);
 				addEa.addAndGet((Integer) cartTemp.get("ea"));
 			});
-			CartRawEvent snapshotCart = null;
-			snapshotCart = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), objectMapper.writeValueAsString(addEa), LocalDateTime.now());
-			Snapshot snapshot = new Snapshot(rawEvent.getSeq(), rawEvent.getVersion(), snapshotCart);
+			CartRawEvent snapshotCart = new CartRawEvent(cart.getMemberId(), "ADD CART", cart.getExpectedVersion(), objectMapper.writeValueAsString(addEa), LocalDateTime.now());
+			Snapshot<A> snapshot = new Snapshot(rawEvent.getSeq(), rawEvent.getVersion(), snapshotCart);
 			snapshotRepository.save(snapshot);
 			snapshotCountMap.put(rawEvent.getIdentifier(), 0);
 
@@ -119,25 +118,26 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 	}
 
 	@Override
-	public A find(ID identifier) throws Exception {
+	public A find(Long seq) throws Exception {
 		// snapshot저장소에서 호출함
-		A aggregateRoot = createAggregateRootViaReflection(identifier);
 
-//		Optional<Snapshot<A, ID>> retrieveSnapshot = retrieveSnapshot(identifier);
-//		List<Event<ID>> baseEvents;
-//		if (retrieveSnapshot.isPresent()) {
-//			Snapshot<A, ID> snapshot = retrieveSnapshot.get();
-//			baseEvents = eventStore.getEventsByAfterVersion(snapshot.getIdentifier(), snapshot.getVersion());
-//			// snapshot에 저장된 aggregateRoot객체를 로딩함.
-//			aggregateRoot = snapshot.getAggregateRoot();
-//		} else {
-//			baseEvents = eventStore.getEvents(identifier);
-//		}
-//
-//		if (baseEvents == null || baseEvents.size() == 0) {
-//			return null;
-//		}
-//
+		A aggregateRoot = null;
+
+		Snapshot retrieveSnapshot = retrieveSnapshot(seq);
+		Cart cart;
+		List<CartRawEvent> baseEvents;
+		if (retrieveSnapshot!=null) {
+			Snapshot<A> snapshot = retrieveSnapshot;
+			baseEvents = eventStore.getEventsByAfterVersion(snapshot.getSeq(), snapshot.getVersion());
+			// snapshot에 저장된 aggregateRoot객체를 로딩함.
+			aggregateRoot = snapshot.getAggregateRoot();
+		} else {
+			baseEvents = eventStore.getEvents(seq);
+		}
+
+		if (baseEvents == null || baseEvents.size() == 0) {
+			return aggregateRoot;
+		}
 //		aggregateRoot.replay(baseEvents);
 
 		return aggregateRoot;
@@ -147,32 +147,20 @@ public abstract class AbstractEventHandler<A extends AggregateRoot, ID> implemen
 	public List<A> findAll() throws Exception {
 		List<A> result = new ArrayList<>();
 
-//		final List<Event<ID>> allEventsOpt = eventStore.getAllEvents();
-//		if (allEventsOpt == null) {
-//			return result;
-//		}
-//
-//		final Map<ID, List<Event<ID>>> eventsByIdentifier = allEventsOpt.stream().collect(groupingBy(Event::getIdentifier));
-//		for (Map.Entry<ID, List<Event<ID>>> entry : eventsByIdentifier.entrySet()) {
-//			A aggregateRoot = createAggregateRootViaReflection(entry.getKey());
-//			aggregateRoot.replay(entry.getValue());
-//
-//			result.add(aggregateRoot);
-//		}
-
 		return result;
 	}
 
 	/**
 	 * Get the snapshot
-	 * @param identifier
+	 * @param seq
 	 * @return
 	 */
-	private Optional<Snapshot> retrieveSnapshot(Long seq) {
+	private Snapshot retrieveSnapshot(Long seq) {
 		if (snapshotRepository == null) {
-			return Optional.empty();
+			return null;
 		}
-		return snapshotRepository.findFirstOrderBySeq(seq);
+		List<Snapshot> lists = snapshotRepository.findAllByOrderByCreatedDesc();
+		return lists.stream().filter((snapshot) -> snapshot.getSeq() == seq).findAny().get();
 	}
 
 }

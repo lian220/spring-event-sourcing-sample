@@ -5,11 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import web.api.eventSourcing.model.Cart;
+import org.springframework.web.bind.annotation.*;
+import web.api.domain.AggregateRoot;
+import web.api.eventSourcing.query.Cart;
 import web.api.eventSourcing.command.CartCommand;
 import web.api.eventSourcing.snapshot.Snapshot;
 import web.api.service.CartService;
@@ -33,10 +31,16 @@ public class CartController {
         return new ResponseEntity<>(cart.getMemberId(), HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/carts/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity findAll(@PathVariable Long memberId) throws Exception {
+        AggregateRoot cart = cartService.findCartByMemberId(memberId);
+        return new ResponseEntity(cart, HttpStatus.CREATED);
+    }
+
     @RequestMapping(value = "/carts/snapshot", method = RequestMethod.GET)
     public ResponseEntity findAllSnapshot() {
         List<Snapshot> snapshots = cartService.findAllSnapshot();
-        return new ResponseEntity(snapshots, HttpStatus.FOUND);
+        return new ResponseEntity(snapshots, HttpStatus.CREATED);
     }
 
 }

@@ -1,7 +1,7 @@
 package web.api.eventSourcing.event;
 
 import lombok.extern.slf4j.Slf4j;
-import web.api.eventSourcing.model.Cart;
+import web.api.eventSourcing.query.Cart;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

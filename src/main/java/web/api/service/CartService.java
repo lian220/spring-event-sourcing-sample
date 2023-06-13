@@ -3,12 +3,13 @@ package web.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import web.api.domain.AggregateRoot;
 import web.api.domain.Member;
 import web.api.eventSourcing.command.CartCommand;
 import web.api.eventSourcing.event.CartEventHandler;
-import web.api.eventSourcing.model.Cart;
-import web.api.eventSourcing.model.CartItem;
-import web.api.eventSourcing.model.Product;
+import web.api.eventSourcing.query.Cart;
+import web.api.eventSourcing.query.CartItem;
+import web.api.eventSourcing.query.Product;
 import web.api.eventSourcing.snapshot.Snapshot;
 import web.api.repository.MemberJpaRepository;
 import web.api.repository.ProductJpaRepository;
@@ -47,6 +48,11 @@ public class CartService {
         cartEventHandler.save(newCart);
 
         return newCart;
+    }
+
+    public AggregateRoot findCartByMemberId(Long memberId) throws Exception {
+        AggregateRoot cart = cartEventHandler.find(memberId);
+        return cart;
     }
 
     public List<Snapshot> findAllSnapshot() {

@@ -3,10 +3,12 @@ package web.api.eventSourcing.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import web.api.eventSourcing.model.Cart;
-import web.api.eventSourcing.model.CartItem;
+import web.api.eventSourcing.query.Cart;
+import web.api.eventSourcing.query.CartItem;
+import web.api.eventSourcing.query.Product;
 import web.api.repository.CartItemRepository;
 import web.api.repository.CartRepository;
+import web.api.repository.ProductJpaRepository;
 
 @Component
 @Slf4j
@@ -15,6 +17,7 @@ public class CartEventProjector extends AbstractEventProjector{
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final ProductJpaRepository productJpaRepository;
 
     public void execute(Cart event) {
         Cart cart = cartRepository.findByMemberId(event.getMemberId());
@@ -27,6 +30,10 @@ public class CartEventProjector extends AbstractEventProjector{
             else
                 cartItem.setCartSeq(cart.getSeq());
             cartItemRepository.save(cartItem);
+
+            Product product = productJpaRepository.findByProductId(cartItem.getProduct().getProductId());
+            product.setEa(product.getEa() - cartItem.getEa());
+            productJpaRepository.save(product);
         }
     }
 

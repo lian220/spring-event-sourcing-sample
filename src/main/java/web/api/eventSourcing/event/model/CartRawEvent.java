@@ -1,6 +1,7 @@
 package web.api.eventSourcing.event.model;
 
 import lombok.*;
+import web.api.domain.AggregateRoot;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode(of = { "seq" })
 @NoArgsConstructor
-public class CartRawEvent implements RawEvent<Long>{
+public class CartRawEvent extends AggregateRoot implements RawEvent<Long>{
     /** seq */
     @Id
     @Column(name = "seq", nullable = false)

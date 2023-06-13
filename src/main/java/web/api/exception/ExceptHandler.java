@@ -25,6 +25,18 @@ public class ExceptHandler {
         );
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected ResponseEntity<ResponseData> noHandlerFoundException(IllegalStateException e) {
+        log.info("ExceptHandler.noHandlerFoundException = {}", e.getMessage());
+        return ResponseEntity.ok(
+                ResponseData.builder()
+                        .resultCode("9999")
+                        .resultMessage("버전을 확인해주세요.")
+                        .build()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected ResponseEntity<ResponseData> commonException(Exception e) {

@@ -2,7 +2,7 @@ package web.api.eventSourcing.event;
 
 import org.springframework.data.repository.Repository;
 import web.api.eventSourcing.event.model.CartRawEvent;
-import web.api.eventSourcing.model.Cart;
+import web.api.eventSourcing.query.Cart;
 
 import java.util.List;
 
@@ -22,10 +22,12 @@ public interface EventStore<ID> extends Repository<Event, Long> {
 
 	/**
 	 * 주어진 identifier 의 저장된 이벤트를 얻는다
+	 *
 	 * @param identifier
 	 * @return
 	 */
-	List<Event<ID>> getEvents(ID identifier);
+	List<CartRawEvent> getEvents(ID identifier);
+	List<CartRawEvent> getEvents(Long seq);
 
 	/**
 	 * 저장된 모든 이벤트를 조회한다
@@ -35,9 +37,10 @@ public interface EventStore<ID> extends Repository<Event, Long> {
 
 	/**
 	 * 주어진 identifier의 저장된 이벤트중 주어진 version이후 이벤트를 얻는다
-	 * @param identifier
+	 *
+	 * @param seq
 	 * @param version
 	 * @return
 	 */
-	List<Event<ID>> getEventsByAfterVersion(ID identifier, Long version);
+	List<CartRawEvent> getEventsByAfterVersion(Long seq, Long version);
 }
